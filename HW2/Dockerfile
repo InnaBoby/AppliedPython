@@ -3,7 +3,7 @@ FROM python:3.10
 WORKDIR /app
 
 COPY ./HW2/requirements.txt requirements.txt
-RUN pip install -r ./HW2/requirements.txt
+RUN pip install -r requirements.txt
 
 COPY . .
 
