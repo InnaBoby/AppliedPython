@@ -7,20 +7,6 @@ from func import *
 
 router=Router()
 
-#Обработчик команды /start
-@router.message(Command('start'))
-async def cmd_start(message: Message):
-    await message.reply(
-        'Это Telegram-бот, который может рассчитать дневные нормы воды и калорий, а также отслеживать тренировки и питание.\n'
-        'Доступные команды:\n'
-        '/set_profile - Настройка профиля пользователя\n'
-        '/log_water <количество> - Логирование воды\n'
-        '/log_food <название продукта> - Логирование еды\n'
-        '/log_workout <время (мин)> - Логирование тренировок\n'
-        '/check_progress - Прогресс по воде и калориям'
-    )
-
-#Обработчик команды /set_profile
 profile = {'weight' : 0,
             'height' : 0,
             'age' : 0,
@@ -33,6 +19,23 @@ profile = {'weight' : 0,
             'workout' : 0,
            'burned_calories' : 0}
 
+history={}
+
+#Обработчик команды /start
+@router.message(Command('start'))
+async def cmd_start(message: Message):
+    await message.reply(
+        'Это Telegram-бот, который может рассчитать дневные нормы воды и калорий, а также отслеживать тренировки и питание.\n'
+        'Доступные команды:\n'
+        '/set_profile - Настройка профиля пользователя\n'
+        '/log_water <количество> - Логирование воды\n'
+        '/log_food <название продукта> - Логирование еды\n'
+        '/log_workout <время (мин)> - Логирование тренировок\n'
+        '/check_progress - Прогресс по воде и калориям\n'
+        '/new_day - Сбрасывает счетчики воды, калорий и тренировок'
+    )
+
+#Обработчик команды /set_profile
 @router.message(Command('set_profile'))
 async def start_form(message: Message, state: FSMContext):
     await message.reply('Введите ваш вес (в кг)?')
@@ -86,18 +89,6 @@ async def process_city(message: Message, state: FSMContext):
                         f'Город: {profile["city"]}\n',
                         reply_markup=keyboard)
 
-@router.callback_query()
-async def handle_callback(callback_query):
-    if callback_query.data == 'Yes':
-        response = await weather_in_city(profile['city'])
-        profile['water_goal']=profile['weight']*30+(profile['activity']//30)*500+(response['main']['temp']//25)*500
-
-        profile['calorie_goal']=10*profile['weight']+6.25*profile['height']-5*profile['age']+300*(profile['activity']//30)
-        await callback_query.message.reply(f"Сегодня Ваша норма воды: {profile['water_goal']} мл\n"
-                            f"Норма калорий: {profile['calorie_goal']} ккал")
-    else:
-        await callback_query.message.reply('Введите /set_profile и начните заполнение заново')
-
 
 #Обработчик команды /log_water
 @router.message(Command('log_water'))
@@ -148,3 +139,34 @@ async def check_progress(message: Message):
                         f'- Сожжено: {profile["burned_calories"]} ккал\n'
                         f'- Баланс: {profile["calories"]-profile["burned_calories"]} ккал')
 
+
+#Обработчик команды /new_day
+@router.message(Command('new_day'))
+async def reset_progress(message: Message):
+    button=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text='Сбросить прогресс дня', callback_data='reset')],
+                                                ])
+    await message.reply('Если вы хотите обновить счетчики воды и калорий, нажмите кнопку ниже:', reply_markup=button)
+
+
+
+@router.callback_query()
+async def handle_callback(callback_query):
+    if callback_query.data == 'Yes':
+        response = await weather_in_city(profile['city'])
+        profile['water_goal']=profile['weight']*30+(profile['activity']//30)*500+(response['main']['temp']//25)*500
+
+        profile['calorie_goal']=10*profile['weight']+6.25*profile['height']-5*profile['age']+300*(profile['activity']//30)
+        await callback_query.message.reply(f"Сегодня Ваша норма воды: {profile['water_goal']} мл\n"
+                            f"Норма калорий: {profile['calorie_goal']} ккал")
+
+    elif callback_query.data == 'reset':
+        history[callback_query.from_user.id] = profile
+        profile['water']=0
+        profile['calories']=0
+        profile['workout']=0
+        profile['burned_calories']=0
+        await callback_query.message.reply(f"Вода: {profile['water']}\nКалории: {profile['calories']}\nТренировки: {profile['workout']}")
+
+    else:
+        await callback_query.message.reply('Введите /set_profile и начните заполнение заново')
