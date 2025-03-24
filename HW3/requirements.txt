@@ -1,0 +1,15 @@
+aiohttp==3.11.14
+alembic==1.15.1
+celery==5.4.0
+fastapi==0.115.11
+fastapi_cache==0.1.0
+fastapi-cache2==0.2.2
+fastapi-users[sqlalchemy]==14.0.1
+flower==2.0.1
+psycopg2-binary
+python-dotenv==1.0.1
+sqlalchemy==2.0.39
+redis==5.2.1
+uvicorn==0.34.0
+gunicorn
+asyncpg==0.30.0
