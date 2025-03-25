@@ -3,6 +3,7 @@ from fastapi import FastAPI, Depends
 from src.auth.db import User
 from collections.abc import AsyncIterator
 from redis import asyncio as aioredis
+from src.config import REDIS_URL
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from src.auth.auth_backend import auth_backend, fastapi_users, current_active_user
@@ -14,7 +15,7 @@ import uvicorn
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    redis = aioredis.from_url("redis://127.0.0.1")
+    redis = aioredis.from_url(REDIS_URL)
     FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
     yield
 
@@ -46,4 +47,4 @@ async def unauthenticated_route():
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", reload=False, host="127.0.0.1", port=8000, log_level="info")
+    uvicorn.run("main:app", reload=False, host="0.0.0.0", port=8000, log_level="info")

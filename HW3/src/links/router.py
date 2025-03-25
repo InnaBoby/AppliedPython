@@ -1,14 +1,12 @@
-import sqlalchemy
 from fastapi import APIRouter, Depends, HTTPException, status
 import string
 import random
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.db import get_async_session, User, Link
-from src.auth.auth_backend import fastapi_users, current_active_user
+from src.auth.auth_backend import current_active_user
 from sqlalchemy import select, insert, delete, update, and_
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
-from datetime import datetime
 from fastapi_cache.decorator import cache
 import time
 
