@@ -188,19 +188,6 @@ async def search(original_url : str,
     return f"For {original_url} exist short link {short}"
 
 
-# @router.post('/lifetime')
-# async def lifetime (short_link: str,
-#                     date: datetime,
-#                     session: AsyncSession = Depends(get_async_session),
-#                     user: User = Depends(current_active_user)):
-#     if user.is_active:
-#         statement = update(Link).where(and_(Link.short_link == short_link, Link.user_id == user.id)).values(
-#             expires_at=date)
-#         await session.execute(statement)
-#         await session.commit()
-#         return {'message' : f'{short_link} will active before {date}'}
-
-
 @router.get('/long/')
 @cache(expire=60)
 async def long_operation(session: AsyncSession = Depends(get_async_session)):

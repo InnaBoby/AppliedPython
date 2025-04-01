@@ -1,13 +1,16 @@
 version: "3.7"
 services:
+
   db:
-    image: postgres:16
+    image: postgres:17-alpine
     container_name: db_app
-    env_file:
-      - ./.env
-    command: -p 1221
-    expose:
-      - 1221
+    restart: always
+    env_file: .env
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_HOST: 5432
 
   redis:
     image: redis:7

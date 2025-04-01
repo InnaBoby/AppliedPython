@@ -1,13 +1,12 @@
 from celery import Celery
+from src.config import CELERY_BROKER_URL, CELERY_RESULT_BACKEND
 from fastapi import Depends
 from src.auth.db import get_async_session, Link
 from sqlalchemy import select, delete
 from datetime import datetime
 
-# CELERY_BROKER_URL = 'redis://localhost:6379/0'
-# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
-celery = Celery('tasks') #, broker=CELERY_BROKER_URL, backend=CELERY_RESULT_BACKEND)
+celery = Celery('tasks', broker=CELERY_BROKER_URL, backend=CELERY_RESULT_BACKEND)
 
 
 @celery.task(default_retry_delay=5, max_retries=2)
