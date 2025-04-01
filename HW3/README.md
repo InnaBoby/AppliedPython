@@ -26,3 +26,11 @@ HW3
 
 ![image](https://github.com/user-attachments/assets/61bb0252-ddca-45aa-a51b-01dfba8c9aa9)
 
+6. Покрытие тестами
+
+![image](https://github.com/user-attachments/assets/e3cd9711-6cd6-49c2-8359-96d396462f94)
+
+   
+7. Нагрузочное тестирование
+
+![image](https://github.com/user-attachments/assets/ec4fe4b3-26e6-4fd1-99e2-b3415a3feac9)
